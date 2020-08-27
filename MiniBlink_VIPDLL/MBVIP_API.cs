@@ -410,6 +410,8 @@ namespace MBVIP
         public int marginRight;
         public int isPrintPageHeadAndFooter;
         public int isPrintBackgroud;
+        public int isLandscape;
+        public int isPrintToMultiPage;
     }
 
     [StructLayout(LayoutKind.Sequential)]

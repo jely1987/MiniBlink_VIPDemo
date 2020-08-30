@@ -194,33 +194,33 @@ namespace MBVIP
             public RunJsEventArgs(IntPtr webView, IntPtr param, IntPtr es, ulong v) : base(webView)
             {
                 fRet = MBVIP_API.mbJsToDouble(es, v);
+
                 IntPtr ptrRet = MBVIP_API.mbJsToString(es, v);
                 strRet = ptrRet.UTF8PtrToStr();
+
                 bRet = MBVIP_API.mbJsToBoolean(es, v) == 1 ? true : false;
+
+                strParam = param.UTF8PtrToStr();
             }
 
             public double fRet { get; }
             public string strRet { get; }
             public bool bRet { get; }
+            public string strParam { get; }
         }
 
         public class JsQueryEventArgs : MiniblinkEventArgs
         {
             public JsQueryEventArgs(IntPtr webView, IntPtr param, IntPtr es, ulong queryId, int customMsg, IntPtr request) : base(webView)
             {
-                fNumRet = MBVIP_API.mbJsToDouble(es, queryId);
-                IntPtr ptrRet = MBVIP_API.mbJsToString(es, queryId);
-                strRet = ptrRet.UTF8PtrToStr();
-                bRet = MBVIP_API.mbJsToBoolean(es, queryId) == 1 ? true : false;
                 iCustomMsg = customMsg;
                 strRequest = request.UTF8PtrToStr();
+                ulQueryId = queryId;
             }
 
-            public double fNumRet { get; }
-            public string strRet { get; }
-            public bool bRet { get; }
             public int iCustomMsg { get; }
             public string strRequest { get; }
+            public ulong ulQueryId { get; }
         }
 
         public class TitleChangedEventArgs : MiniblinkEventArgs
@@ -2961,19 +2961,20 @@ namespace MBVIP
         }
 
         /// <summary>
-        /// 运行一段js
+        /// 执行js，结构在m_mbRunJsCallback中获取
         /// </summary>
         /// <param name="strJs"></param>
-        public void RunJs(string strJs)
+        public void RunJs(string strJs, string strParam)
         {
             IntPtr ptrJs = strJs.StrToUtf8Ptr();
+            IntPtr ptrParam = strParam.StrToUtf8Ptr();
             IntPtr ptrFrameId = MBVIP_API.mbWebFrameGetMainFrame(m_WebView);
 
-            MBVIP_API.mbRunJs(m_WebView, ptrFrameId, ptrJs, 1, m_mbRunJsCallback, IntPtr.Zero, IntPtr.Zero);
+            MBVIP_API.mbRunJs(m_WebView, ptrFrameId, ptrJs, 1, m_mbRunJsCallback, ptrParam, IntPtr.Zero);
         }
 
         /// <summary>
-        /// 异步运行js
+        /// 异步运行js（暂不可用）
         /// </summary>
         /// <param name="ptrFrameId"></param>
         /// <param name="strJs"></param>
@@ -2986,7 +2987,7 @@ namespace MBVIP
         }
 
         /// <summary>
-        /// 查询RunJsSync运行结果
+        /// 注册js通知native的回调。用于js调用c#函数
         /// </summary>
         /// <param name="strParam"></param>
         public void mbOnJsQuery(string strParam)
@@ -2996,12 +2997,12 @@ namespace MBVIP
         }
 
         /// <summary>
-        /// 响应查询
+        /// 返回c#函数的值给js
         /// </summary>
         /// <param name="iQueryId"></param>
         /// <param name="iCustomMsg"></param>
         /// <param name="strResponse"></param>
-        public void ResponseQuery(long iQueryId, int iCustomMsg, string strResponse)
+        public void ResponseQuery(ulong iQueryId, int iCustomMsg, string strResponse)
         {
             IntPtr ptrResponse = strResponse.StrToUtf8Ptr();
             MBVIP_API.mbResponseQuery(m_WebView, iQueryId, iCustomMsg, ptrResponse);

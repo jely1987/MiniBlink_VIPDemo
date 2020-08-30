@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using MBVIP;
+using System;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MBVIP;
-using System.Runtime.InteropServices;
 
 namespace MiniBlink_VIPDemo
 {
@@ -35,8 +29,34 @@ namespace MiniBlink_VIPDemo
             m_webView.onDownload += webView_OnDownload;
             m_webView.onNetResponse += webView_OnNetResponse;
             m_webView.onImageBufferToDataURL += webView_OnImageBufferToDataURL;
+            m_webView.onGetSource += webView_OnGetHtmlCode;
 
-            m_webView.LoadUrl("https://cn.bing.com/search?q=http+analyzer&PC=U316&FORM=CHROMN");
+            m_webView.onRunJs += webView_OnRunJs;    // c#调js，结果在回调里取
+
+            m_webView.mbOnJsQuery(null);    // js调c#，js代码必须为：mbQuery(0x12345, 'arg', jsFun);形式
+            m_webView.onJsQuery += webView_OnJsQuery;
+
+            //m_webView.LoadUrl("https://cn.bing.com/search?q=http+analyzer&PC=U316&FORM=CHROMN");
+            m_webView.mbLoadHtmlWithBaseUrl(GetDemoHtml(), "");
+        }
+
+        private string GetDemoHtml()
+        {
+            string strHtml = string.Join(".", typeof(Form1).Namespace, "HtmlDemo.html");
+            using (Stream st = typeof(Form1).Assembly.GetManifestResourceStream(strHtml))
+            {
+                StreamReader sr = new StreamReader(st, Encoding.UTF8);
+                strHtml = sr.ReadToEnd();
+            }
+
+            return strHtml;
+        }
+
+        private void webView_OnJsQuery(object sender, MBVIP_WebView.JsQueryEventArgs e)
+        {
+            string jsRet = $"字符串型参数是：{e.strRequest}";    // 要返回给js的值，只能是字符串形式
+
+            m_webView.ResponseQuery(e.ulQueryId, e.iCustomMsg, jsRet);    // 如需要返回值给js，需要调用本接口
         }
 
         private void webView_OnURLChange(object sender, MBVIP_WebView.UrlChangedEventArgs e)
@@ -139,10 +159,6 @@ namespace MiniBlink_VIPDemo
             string ss = $"{e.LoadingResult} {e.strFailedReason}";
 
             m_webView.GetSource();    // 获取网页源码，因为是多线程架构，异步的，结果要在回调里取
-            m_webView.onGetSource += webView_OnGetHtmlCode;
-
-            m_webView.RunJs("return document.URL;");    // 执行js，需要返回值的话需要加return
-            m_webView.onRunJs += webView_OnRunJs;
         }
 
         private void webView_OnGetHtmlCode(object sender, MBVIP_WebView.GetSourceEventArgs e)
@@ -152,7 +168,23 @@ namespace MiniBlink_VIPDemo
 
         private void webView_OnRunJs(object sender, MBVIP_WebView.RunJsEventArgs e)
         {
-            string strJsRet = e.strRet;
+            string strJsRet = e.strRet;    // 返回值有三种类型，字符串型，数字型，bool型
+            MessageBox.Show(strJsRet, $"【我是c#对话框】{e.strParam}的执行结果为：", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            m_webView.RunJs("return document.URL;", "js代码document.URL");    // 执行js代码，需要返回值的话需要加return
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            m_webView.RunJs("showText();", "js函数showText()");    // 执行页面中的js函数，无参数无返回值
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            m_webView.RunJs("return getText('text');", "js函数getText('text')");    // 执行页面中的js函数，有参数有返回值
         }
     }
 }

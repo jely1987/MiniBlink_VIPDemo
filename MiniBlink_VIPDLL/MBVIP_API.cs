@@ -1951,14 +1951,14 @@ namespace MBVIP
         internal static extern void mbOnJsQuery(IntPtr webView, mbJsQueryCallback callback, IntPtr param);
 
         /// <summary>
-        /// 网络响应查询
+        /// 返回c#执行结果给js
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="queryId"></param>
         /// <param name="customMsg"></param>
         /// <param name="response"></param>
         [DllImport("mb.dll", EntryPoint = "mbResponseQuery", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbResponseQuery(IntPtr webView, long queryId, int customMsg, IntPtr response);
+        internal static extern void mbResponseQuery(IntPtr webView, ulong queryId, int customMsg, IntPtr response);
 
         /// <summary>
         /// 运行一段js，返回js的值mbValue在callback中获取。mbValue是个封装了内部v8各种类型的类

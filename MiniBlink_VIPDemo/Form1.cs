@@ -33,7 +33,7 @@ namespace MiniBlink_VIPDemo
 
             m_webView.onRunJs += webView_OnRunJs;    // c#调js，结果在回调里取
 
-            m_webView.mbOnJsQuery(null);    // js调c#，js代码必须为：mbQuery(0x12345, 'arg', jsFun);形式
+            m_webView.mbOnJsQuery(null);    // js调c#，js代码必须为：mbQuery(12345, 'arg', jsFun);形式
             m_webView.onJsQuery += webView_OnJsQuery;
 
             //m_webView.LoadUrl("https://cn.bing.com/search?q=http+analyzer&PC=U316&FORM=CHROMN");
@@ -54,9 +54,11 @@ namespace MiniBlink_VIPDemo
 
         private void webView_OnJsQuery(object sender, MBVIP_WebView.JsQueryEventArgs e)
         {
-            string jsRet = $"字符串型参数是：{e.strRequest}";    // 要返回给js的值，只能是字符串形式
-
-            m_webView.ResponseQuery(e.ulQueryId, e.iCustomMsg, jsRet);    // 如需要返回值给js，需要调用本接口
+            if (e.iCustomMsg == 12345)
+            {
+                string jsRet = $"字符串型参数是：{e.strRequest}";    // 要返回给js的值，只能是字符串形式
+                m_webView.ResponseQuery(e.ulQueryId, e.iCustomMsg, jsRet);    // 如需要返回值给js，需要调用本接口
+            }
         }
 
         private void webView_OnURLChange(object sender, MBVIP_WebView.UrlChangedEventArgs e)
@@ -74,7 +76,6 @@ namespace MiniBlink_VIPDemo
             m_webView.onNetJobDataRecv += webView_onNetJobDataRecv;
             m_webView.onNetJobDataFinish += webView_onNetJobDataFinish;
             m_webView.onPopupDialogSaveName += webView_onPopupDialogSaveName;
-            
         }
 
         private void webView_onNetJobDataRecv(object sender, MBVIP_WebView.NetJobDataRecvEventArgs e)

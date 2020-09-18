@@ -171,7 +171,7 @@ namespace MBVIP
             public int iHeight { get; }
         }
 
-        public class BlinkThreadInitEventArgs
+        public class BlinkThreadInitEventArgs : EventArgs
         {
             public BlinkThreadInitEventArgs(IntPtr param)
             {
@@ -407,7 +407,7 @@ namespace MBVIP
             public int iWorldId { get; }
         }
 
-        public class GetPluginListEventArgs
+        public class GetPluginListEventArgs : EventArgs
         {
             public GetPluginListEventArgs(int refresh, IntPtr pluginListBuilder, IntPtr param)
             {
@@ -435,16 +435,57 @@ namespace MBVIP
 
         public class DownloadEventArgs : MiniblinkEventArgs
         {
+            private IntPtr m_url;
+
             public DownloadEventArgs(IntPtr webView, IntPtr param, IntPtr frameId, IntPtr url, IntPtr downloadJob) : base(webView)
             {
-                strUrl = url.UTF8PtrToStr();
+                m_url = url;
             }
 
-            /// <summary>
-            /// 设置是否取消，true表示取消
-            /// </summary>
-            public bool bCancel { get; set; }
-            public string strUrl { get; }
+            public string SaveFilePath { get; set; }
+
+            public bool Cancel { get; set; }
+
+            public long ContentLength { get; set; }
+
+            public string URL
+            {
+                get { return m_url.UTF8PtrToStr(); }
+            }
+
+            public event EventHandler<DownloadProgressEventArgs> Progress;
+
+            public void OnProgress(DownloadProgressEventArgs e)
+            {
+                Progress?.Invoke(this, e);
+            }
+
+            public event EventHandler<DownloadFinishEventArgs> Finish;
+
+            public void OnFinish(DownloadFinishEventArgs e)
+            {
+                Finish?.Invoke(this, e);
+            }
+        }
+
+        /// <summary>
+        /// 下载过程事件参数
+        /// </summary>
+        public class DownloadProgressEventArgs : EventArgs
+        {
+            public long Total { get; set; }
+            public long Received { get; set; }
+            public byte[] Data { get; set; }
+            public bool Cancel { get; set; }
+        }
+
+        /// <summary>
+        /// 下载完成事件参数
+        /// </summary>
+        public class DownloadFinishEventArgs : EventArgs
+        {
+            public Exception Error { get; set; }
+            public bool IsCompleted { get; set; }
         }
 
         public class ConsoleEventArgs : MiniblinkEventArgs
@@ -641,7 +682,7 @@ namespace MBVIP
             public double fFinishTime { get; }
         }
 
-        public class NetJobDataRecvEventArgs
+        public class NetJobDataRecvEventArgs : EventArgs
         {
             public NetJobDataRecvEventArgs(IntPtr ptr, IntPtr job, IntPtr data, int length)
             {
@@ -653,7 +694,7 @@ namespace MBVIP
             public IntPtr ptrJob { get; }
         }
 
-        public class NetJobDataFinishEventArgs
+        public class NetJobDataFinishEventArgs : EventArgs
         {
             public NetJobDataFinishEventArgs(IntPtr ptr, IntPtr job, mbLoadingResult result)
             {
@@ -665,7 +706,7 @@ namespace MBVIP
             public IntPtr ptrJob { get; }
         }
 
-        public class PopupDialogSaveNameEventArgs
+        public class PopupDialogSaveNameEventArgs : EventArgs
         {
             public PopupDialogSaveNameEventArgs(IntPtr ptr, IntPtr filePath)
             {
@@ -2366,7 +2407,7 @@ namespace MBVIP
                     DownloadEventArgs e = new DownloadEventArgs(webView, param, frameId, url, downloadJob);
                     m_mbDownloadHandler(this, e);
 
-                    iRet = e.bCancel ? 0 : 1;
+                    iRet = e.Cancel ? 0 : 1;
                 }
 
                 return iRet;
@@ -3353,11 +3394,11 @@ namespace MBVIP
         /// <param name="ptrJob"></param>
         /// <param name="strKey"></param>
         /// <param name="strValue"></param>
-        public void SetHttpHeaderField(IntPtr ptrJob, string strKey, string strValue)
+        public void SetHttpHeaderField(IntPtr ptrJob, string strKey, string strValue, bool response=false)
         {
             IntPtr ptrKey = strKey.StrToUnicodePtr();
             IntPtr ptrValue = strValue.StrToUnicodePtr();
-            MBVIP_API.mbNetSetHTTPHeaderField(ptrJob, ptrKey, ptrValue, 0);
+            MBVIP_API.mbNetSetHTTPHeaderField(ptrJob, ptrKey, ptrValue, response ? 1 : 0);
         }
 
         /// <summary>

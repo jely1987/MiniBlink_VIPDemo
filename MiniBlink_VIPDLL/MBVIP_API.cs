@@ -905,7 +905,7 @@ namespace MBVIP
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="debugString">
-        /// "showDevTools"	开启开发者工具，此时param要填写开发者工具的资源路径，如file:///c:/miniblink-release/front_end/inspector.html。注意param此时必须是utf8
+        /// "showDevTools"	开启开发者工具，此时param要填写开发者工具的资源路径，如file:///c:/miniblink-release/front_end/inspector.html。注意param不能包含中文，并且必须是全路径
         /// "wakeMinInterval" 设置帧率，默认值是10，值越大帧率越低
         /// "drawMinInterval" 设置帧率，默认值是3，值越大帧率越低
         /// "antiAlias" 设置抗锯齿渲染。param必须设置为"1"

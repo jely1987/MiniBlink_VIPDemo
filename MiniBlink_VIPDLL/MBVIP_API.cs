@@ -774,20 +774,6 @@ namespace MBVIP
         internal static extern void mbInit(ref mbSettings setting);
 
         /// <summary>
-        /// 设置mb.dll路径，默认是exe的同目录，不修改的话不用调用此接口
-        /// </summary>
-        /// <param name="dllMbPath"></param>
-        [DllImport("mb.dll", EntryPoint = "mbSetMbDllPath", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbSetMbDllPath(IntPtr dllMbPath);
-
-        /// <summary>
-        /// 设置node.dll路径，默认是exe的同目录，不修改的话不用调用此接口
-        /// </summary>
-        /// <param name="dllNodePath"></param>
-        [DllImport("mb.dll", EntryPoint = "mbSetMbMainDllPath", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbSetMbMainDllPath(IntPtr dllNodePath);
-
-        /// <summary>
         /// 反初始化
         /// </summary>
         [DllImport("mb.dll", EntryPoint = "mbUninit", CallingConvention = CallingConvention.StdCall)]

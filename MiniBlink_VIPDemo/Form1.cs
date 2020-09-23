@@ -38,6 +38,8 @@ namespace MiniBlink_VIPDemo
 
             //m_webView.LoadUrl("https://cn.bing.com/search?q=http+analyzer&PC=U316&FORM=CHROMN");
             m_webView.mbLoadHtmlWithBaseUrl(GetDemoHtml(), "");
+
+            m_webView.setMBDllPath("");
         }
 
         private string GetDemoHtml()

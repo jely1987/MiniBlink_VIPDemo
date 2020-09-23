@@ -2871,26 +2871,6 @@ namespace MBVIP
         }
 
         /// <summary>
-        /// 设置mb.dll路径，默认是exe的同目录
-        /// </summary>
-        /// <param name="strPath"></param>
-        public void setMBDllPath(string strPath)
-        {
-            IntPtr ptrPath = strPath.StrToUtf8Ptr();
-            MBVIP_API.mbSetMbDllPath(ptrPath);
-        }
-
-        /// <summary>
-        /// 设置node.dll路径，默认是exe的同目录
-        /// </summary>
-        /// <param name="strPath"></param>
-        public void setNodeDllPath(string strPath)
-        {
-            IntPtr ptrPath = strPath.StrToUtf8Ptr();
-            MBVIP_API.mbSetMbMainDllPath(ptrPath);
-        }
-
-        /// <summary>
         /// 设置居中（相对父控件）
         /// </summary>
         public void SetCenter()

@@ -2672,7 +2672,7 @@ namespace MBVIP
         /// </summary>
         public string CookieFullPath
         {
-            set { MBVIP_API.mbSetCookieJarFullPath(m_WebView, value.StrToUnicodePtr()); }
+            set { MBVIP_API.mbSetCookieJarFullPath(m_WebView, value); }
         }
 
         /// <summary>
@@ -2680,7 +2680,7 @@ namespace MBVIP
         /// </summary>
         public string StorageFullPath
         {
-            set { MBVIP_API.mbSetLocalStorageFullPath(m_WebView, value.StrToUnicodePtr()); }
+            set { MBVIP_API.mbSetLocalStorageFullPath(m_WebView, value); }
         }
 
         /// <summary>
@@ -3551,8 +3551,7 @@ namespace MBVIP
         /// <param name="strPah"></param>
         public void AddPluginDirectory(string strPah)
         {
-            IntPtr ptrPath = strPah.StrToUnicodePtr();
-            MBVIP_API.mbAddPluginDirectory(m_WebView, ptrPath);
+            MBVIP_API.mbAddPluginDirectory(m_WebView, strPah);
         }
 
         /// <summary>

@@ -1283,24 +1283,24 @@ namespace MBVIP
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="path"></param>
-        [DllImport("mb.dll", EntryPoint = "mbSetCookieJarPath", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbSetCookieJarPath(IntPtr webView, IntPtr path);
+        [DllImport("mb.dll", EntryPoint = "mbSetCookieJarPath", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        internal static extern void mbSetCookieJarPath(IntPtr webView, string path);
 
         /// <summary>
         /// 设置cookie的全路径+文件名，如果不存在则自动新建
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="path"></param>
-        [DllImport("mb.dll", EntryPoint = "mbSetCookieJarFullPath", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbSetCookieJarFullPath(IntPtr webView, IntPtr path);
+        [DllImport("mb.dll", EntryPoint = "mbSetCookieJarFullPath", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        internal static extern void mbSetCookieJarFullPath(IntPtr webView, string path);
 
         /// <summary>
         /// 设置local storage的全路径，如果不存在则自动新建
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="path"></param>
-        [DllImport("mb.dll", EntryPoint = "mbSetLocalStorageFullPath", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbSetLocalStorageFullPath(IntPtr webView, IntPtr path);
+        [DllImport("mb.dll", EntryPoint = "mbSetLocalStorageFullPath", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        internal static extern void mbSetLocalStorageFullPath(IntPtr webView, string path);
 
         /// <summary>
         /// 获取页面标题
@@ -1323,8 +1323,8 @@ namespace MBVIP
         /// </summary>
         /// <param name="webView"></param>
         /// <param name="path"></param>
-        [DllImport("mb.dll", EntryPoint = "mbAddPluginDirectory", CallingConvention = CallingConvention.StdCall)]
-        internal static extern void mbAddPluginDirectory(IntPtr webView, IntPtr path);
+        [DllImport("mb.dll", EntryPoint = "mbAddPluginDirectory", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+        internal static extern void mbAddPluginDirectory(IntPtr webView, string path);
 
         /// <summary>
         /// 设置UA

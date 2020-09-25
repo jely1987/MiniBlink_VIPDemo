@@ -658,6 +658,9 @@ namespace MBVIP
     internal delegate void mbLoadUrlEndCallback(IntPtr webView, IntPtr param, IntPtr url, IntPtr job, IntPtr buf, int len);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    internal delegate void mbLoadUrlFailCallback(IntPtr webView, IntPtr param, IntPtr url, IntPtr job);
+
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate void mbWillReleaseScriptContextCallback(IntPtr webView, IntPtr param, IntPtr frameId, IntPtr context, int worldId);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -1510,6 +1513,16 @@ namespace MBVIP
         /// <param name="param"></param>
         [DllImport("mb.dll", EntryPoint = "mbOnLoadUrlEnd", CallingConvention = CallingConvention.StdCall)]
         internal static extern void mbOnLoadUrlEnd(IntPtr webView, mbLoadUrlEndCallback callback, IntPtr param);
+
+
+        /// <summary>
+        /// 网络加载失败时，触发此回调
+        /// </summary>
+        /// <param name="webView"></param>
+        /// <param name="callback"></param>
+        /// <param name="param"></param>
+        [DllImport("mb.dll", EntryPoint = "mbOnLoadUrlFail", CallingConvention = CallingConvention.StdCall)]
+        internal static extern void mbOnLoadUrlFail(IntPtr webView, mbLoadUrlFailCallback callback, IntPtr param);
 
         /// <summary>
         /// 网页标题改变时会触发此回调

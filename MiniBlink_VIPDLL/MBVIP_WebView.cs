@@ -39,6 +39,7 @@ namespace MBVIP
         private mbConsoleCallback m_mbConsoleCallback = null;
         private mbLoadUrlBeginCallback m_mbLoadUrlBeginCallback = null;
         private mbLoadUrlEndCallback m_mbLoadUrlEndCallback = null;
+        private mbLoadUrlFailCallback m_mbLoadUrlFailCallback = null;
         private mbWillReleaseScriptContextCallback m_mbWillReleaseScriptContextCallback = null;
         private mbNetResponseCallback m_mbNetResponseCallback = null;
         private mbNetGetFaviconCallback m_mbNetGetFaviconCallback = null;
@@ -93,6 +94,7 @@ namespace MBVIP
         private event EventHandler<ConsoleEventArgs> m_mbConsoleHandler = null;
         private event EventHandler<LoadUrlBeginEventArgs> m_mbLoadUrlBeginHandler = null;
         private event EventHandler<LoadUrlEndEventArgs> m_mbLoadUrlEndHandler = null;
+        private event EventHandler<LoadUrlFailEventArgs> m_mbLoadUrlFailHandler = null;
         private event EventHandler<WillReleaseScriptContextEventArgs> m_mbWillReleaseScriptContextHandler = null;
         private event EventHandler<NetResponseEventArgs> m_mbNetResponseHandler = null;
         private event EventHandler<NetGetFaviconEventArgs> m_mbNetGetFaviconHandler = null;
@@ -533,6 +535,18 @@ namespace MBVIP
 
             public string strUrl { get; }
             public byte[] byteData { get; }
+            public IntPtr ptrJob { get; }
+        }
+
+        public class LoadUrlFailEventArgs : MiniblinkEventArgs
+        {
+            public LoadUrlFailEventArgs(IntPtr webView, IntPtr param, IntPtr url, IntPtr job) : base(webView)
+            {
+                strUrl = url.UTF8PtrToStr();
+                ptrJob = job;
+            }
+
+            public string strUrl { get; }
             public IntPtr ptrJob { get; }
         }
 
@@ -1773,6 +1787,29 @@ namespace MBVIP
             }
         }
 
+        public event EventHandler<LoadUrlFailEventArgs> onLoadUrlFail
+        {
+            add
+            {
+                if (m_mbLoadUrlFailHandler == null)
+                {
+                    MBVIP_API.mbOnLoadUrlFail(m_WebView, m_mbLoadUrlFailCallback, IntPtr.Zero);
+                }
+
+                m_mbLoadUrlFailHandler += value;
+            }
+
+            remove
+            {
+                m_mbLoadUrlFailHandler -= value;
+
+                if (m_mbLoadUrlFailHandler == null)
+                {
+                    MBVIP_API.mbOnLoadUrlFail(m_WebView, null, IntPtr.Zero);
+                }
+            }
+        }
+
         public event EventHandler<WillReleaseScriptContextEventArgs> onWillReleaseScriptContext
         {
             add
@@ -2328,6 +2365,11 @@ namespace MBVIP
             m_mbLoadUrlEndCallback = new mbLoadUrlEndCallback((IntPtr webView, IntPtr param, IntPtr url, IntPtr job, IntPtr buf, int len) =>
             {
                 m_mbLoadUrlEndHandler?.Invoke(this, new LoadUrlEndEventArgs(webView, param, url, job, buf, len));
+            });
+
+            m_mbLoadUrlFailCallback = new mbLoadUrlFailCallback((IntPtr webView, IntPtr param, IntPtr url, IntPtr job) =>
+            {
+                m_mbLoadUrlFailHandler?.Invoke(this, new LoadUrlFailEventArgs(webView, param, url, job));
             });
 
             m_mbWillReleaseScriptContextCallback = new mbWillReleaseScriptContextCallback((IntPtr webView, IntPtr param, IntPtr frameId, IntPtr context, int worldId) =>
